@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ices.aigccommunity.dao.CommentMapper">
+    <resultMap id="BaseResultMap" type="com.ices.aigccommunity.enity.Comment">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="userId" jdbcType="BIGINT" property="userId" />
+        <result column="contentId" jdbcType="BIGINT" property="contentId" />
+        <result column="parentId" jdbcType="BIGINT" property="parentId" />
+        <result column="replyTime" jdbcType="TIMESTAMP" property="replyTime" />
+        <result column="body" jdbcType="VARCHAR" property="body" />
+        <result column="level" jdbcType="TINYINT" property="level" />
+        <result column="toUid" jdbcType="BIGINT" property="toUid" />
+    </resultMap>
+    <insert id="insertComment" parameterType="com.ices.aigccommunity.enity.Comment" useGeneratedKeys="true" keyProperty="id">
+        insert into comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="userId != null">
+                userId,
+            </if>
+            <if test="contentId != null">
+                contentId,
+            </if>
+            <if test="parentId != null">
+                parentId,
+            </if>
+            <if test="replyTime != null">
+                replyTime,
+            </if>
+            <if test="body != null">
+                body,
+            </if>
+            <if test="level != null">
+                level,
+            </if>
+            <if test="toUid != null">
+                toUid,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="contentId != null">
+                #{contentId,jdbcType=BIGINT},
+            </if>
+            <if test="parentId != null">
+                #{parentId,jdbcType=BIGINT},
+            </if>
+            <if test="replyTime != null">
+                #{replyTime,jdbcType=TIMESTAMP},
+            </if>
+            <if test="body != null">
+                #{body,jdbcType=VARCHAR},
+            </if>
+            <if test="level != null">
+                #{level,jdbcType=TINYINT},
+            </if>
+            <if test="toUid != null">
+                #{toUid,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+
+    <select id="selectList"  parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select * from comment
+        where  contentId=#{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="getById"  parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select * from comment
+        where  id=#{id,jdbcType=BIGINT}
+    </select>
+
+</mapper>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ices.aigccommunity.dao.ContentMapper">
+    <resultMap id="BaseResultMap" type="com.ices.aigccommunity.enity.Content">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="publisher" jdbcType="BIGINT" property="publisher" />
+        <result column="imageID" jdbcType="BIGINT" property="imageID" />
+        <result column="publishTime" jdbcType="DATE" property="publishTime" />
+        <result column="state" jdbcType="TINYINT" property="state" />
+        <result column="prompt" jdbcType="VARCHAR" property="prompt" />
+        <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="browsed" jdbcType="BIGINT" property="browsed" />
+        <result column="liked" jdbcType="BIGINT" property="liked" />
+        <result column="collected" jdbcType="BIGINT" property="collected" />
+    </resultMap>
+    <insert id="insertContent" parameterType="com.ices.aigccommunity.enity.Content" useGeneratedKeys="true" keyProperty="id">
+        insert into content
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="publisher != null">
+                publisher,
+            </if>
+            <if test="imageID != null">
+                imageID,
+            </if>
+            <if test="publishTime != null">
+                publishTime,
+            </if>
+            <if test="state != null">
+                state,
+            </if>
+            <if test="prompt != null">
+                prompt,
+            </if>
+            <if test="description != null">
+                description,
+            </if>
+            <if test="browsed != null">
+                browsed,
+            </if>
+            <if test="liked != null">
+                liked,
+            </if>
+            <if test="collected != null">
+                collected,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="publisher != null">
+                #{publisher,jdbcType=BIGINT},
+            </if>
+            <if test="imageID != null">
+                #{imageID,jdbcType=BIGINT},
+            </if>
+            <if test="publishTime != null">
+                #{publishTime,jdbcType=DATE},
+            </if>
+            <if test="state != null">
+                #{state,jdbcType=TINYINT},
+            </if>
+            <if test="prompt != null">
+                #{prompt,jdbcType=VARCHAR},
+            </if>
+            <if test="description != null">
+                #{description,jdbcType=VARCHAR},
+            </if>
+            <if test="browsed != null">
+                #{browsed,jdbcType=BIGINT},
+            </if>
+            <if test="liked != null">
+                #{liked,jdbcType=BIGINT},
+            </if>
+            <if test="collected != null">
+                #{collected,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+    <select id="getAllContent" resultMap="BaseResultMap">
+        select * from content;
+    </select>
+
+    <select id="getById"  parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select * from content
+        where  id=#{id,jdbcType=BIGINT}
+    </select>
+
+    <update id="updateBrowsed" parameterType="java.lang.Long">
+        update content set browsed = browsed+1 where id = #{contentId,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateLiked" parameterType="java.lang.Long">
+        update content set liked = liked+1 where id = #{contentId,jdbcType=BIGINT}
+    </update>
+
+    <update id="updateCollected" parameterType="java.lang.Long">
+        update content set collected = collected+1 where id = #{contentId,jdbcType=BIGINT}
+    </update>
+
+
+</mapper>

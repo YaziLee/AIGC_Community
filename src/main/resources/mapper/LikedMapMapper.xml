@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ices.aigccommunity.dao.LikedMapMapper">
+    <insert id="insertRecord">
+        insert into liked_map
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                userId,
+            </if>
+            <if test="contentId != null">
+                contentId,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=BIGINT},
+            </if>
+            <if test="contentId != null">
+                #{contentId,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+</mapper>

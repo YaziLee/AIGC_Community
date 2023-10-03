@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ices.aigccommunity.dao.ImageMapper">
+    <resultMap id="BaseResultMap" type="com.ices.aigccommunity.enity.Image">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="type" jdbcType="TINYINT" property="type" />
+        <result column="url" jdbcType="VARCHAR" property="url" />
+        <result column="subjectTo" jdbcType="BIGINT" property="subjectTo" />
+    </resultMap>
+    <insert id="insertImage" parameterType="com.ices.aigccommunity.enity.Image" useGeneratedKeys="true" keyProperty="id">
+        insert into image
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                id,
+            </if>
+            <if test="type != null">
+                type,
+            </if>
+            <if test="url != null">
+                url,
+            </if>
+            <if test="subjectTo != null">
+                subjectTo,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">
+                #{id,jdbcType=BIGINT},
+            </if>
+            <if test="type != null">
+                #{type,jdbcType=TINYINT},
+            </if>
+            <if test="url != null">
+                #{url,jdbcType=VARCHAR},
+            </if>
+            <if test="subjectTo != null">
+                #{subjectTo,jdbcType=BIGINT},
+            </if>
+        </trim>
+    </insert>
+
+    <update id="setFatherId">
+        update image set subjectTo = #{fatherId,jdbcType=BIGINT}
+        where id = #{imageId,jdbcType=BIGINT}
+    </update>
+
+    <select id="getSon" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select * from image where type=1 and subjectTo=#{id ,jdbcType=BIGINT}
+    </select>
+
+    <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select * from image where id=#{id,jdbcType=BIGINT}
+    </select>
+</mapper>
