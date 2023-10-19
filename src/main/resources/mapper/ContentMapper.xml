@@ -9,6 +9,7 @@
         <result column="state" jdbcType="TINYINT" property="state" />
         <result column="prompt" jdbcType="VARCHAR" property="prompt" />
         <result column="description" jdbcType="VARCHAR" property="description" />
+        <result column="name" jdbcType="VARCHAR" property="name" />
         <result column="browsed" jdbcType="BIGINT" property="browsed" />
         <result column="liked" jdbcType="BIGINT" property="liked" />
         <result column="collected" jdbcType="BIGINT" property="collected" />
@@ -36,6 +37,9 @@
             </if>
             <if test="description != null">
                 description,
+            </if>
+            <if test="name != null">
+                name,
             </if>
             <if test="browsed != null">
                 browsed,
@@ -69,6 +73,9 @@
             <if test="description != null">
                 #{description,jdbcType=VARCHAR},
             </if>
+            <if test="name != null">
+                #{name,jdbcType=VARCHAR},
+            </if>
             <if test="browsed != null">
                 #{browsed,jdbcType=BIGINT},
             </if>
@@ -94,12 +101,20 @@
         update content set browsed = browsed+1 where id = #{contentId,jdbcType=BIGINT}
     </update>
 
-    <update id="updateLiked" parameterType="java.lang.Long">
+    <update id="incLiked" parameterType="java.lang.Long">
         update content set liked = liked+1 where id = #{contentId,jdbcType=BIGINT}
     </update>
 
-    <update id="updateCollected" parameterType="java.lang.Long">
+    <update id="decLiked" parameterType="java.lang.Long">
+        update content set liked = liked-1 where id = #{contentId,jdbcType=BIGINT}
+    </update>
+
+    <update id="incCollected" parameterType="java.lang.Long">
         update content set collected = collected+1 where id = #{contentId,jdbcType=BIGINT}
+    </update>
+
+    <update id="decCollected" parameterType="java.lang.Long">
+        update content set collected = collected-1 where id = #{contentId,jdbcType=BIGINT}
     </update>
 
 

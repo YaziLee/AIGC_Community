@@ -1,6 +1,9 @@
 package com.ices.aigccommunity.utils;
 
 import com.ices.aigccommunity.common.Constants;
+import com.ices.aigccommunity.service.impl.ContentServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -11,8 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 public class ImageUtil {
-
+    private static final Logger logger = LoggerFactory.getLogger(ImageUtil.class);
     public static List<File> imageCrop(File imageFile){
+        logger.info("存取的临时文件是：{}",imageFile);
         List<File> cropedImages=new ArrayList();
         try {
             // 读取原始图片

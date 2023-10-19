@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.ices.aigccommunity.dao.LikedMapMapper">
+    <resultMap id="BaseResultMap" type="com.ices.aigccommunity.enity.LikedMap">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="userId" jdbcType="BIGINT" property="userId" />
+        <result column="contentId" jdbcType="BIGINT" property="contentId" />
+    </resultMap>
     <insert id="insertRecord">
         insert into liked_map
         <trim prefix="(" suffix=")" suffixOverrides=",">
@@ -20,4 +25,13 @@
             </if>
         </trim>
     </insert>
+
+    <delete id="deleteRecord">
+        delete from liked_map where userId=#{userId,jdbcType=BIGINT} and contentId=#{contentId,jdbcType=BIGINT}
+    </delete>
+
+    <select id="selectByContentUserId" resultMap="BaseResultMap">
+        select * from liked_map where userId=#{userId,jdbcType=BIGINT} and contentId=#{contentId,jdbcType=BIGINT}
+    </select>
+
 </mapper>

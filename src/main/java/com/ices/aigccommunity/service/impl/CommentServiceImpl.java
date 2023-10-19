@@ -50,12 +50,14 @@ public class CommentServiceImpl implements CommentService {
             CommentVo commentVo=new CommentVo();
             logger.info("评论的内容是：{}",comment);
             BeanUtils.copyProperties(comment,commentVo);
+            logger.info("复制后评论的内容是：{}",commentVo);
 
             //作者信息
             User author = userService.getById(comment.getUserId());
             UserVo authorVo=new UserVo();
             BeanUtils.copyProperties(author,authorVo);
             commentVo.setAuthor(authorVo);
+
 
             //toUser信息 level>1 说明有回复对象
             if(comment.getLevel()>1){
@@ -65,6 +67,7 @@ public class CommentServiceImpl implements CommentService {
                 commentVo.setToUser(toUserVo);
             }
             commentVos.add(commentVo);
+            logger.info("最后评论的内容是：{}",commentVo);
         }
 
         //构造成树

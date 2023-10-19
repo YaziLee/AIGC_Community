@@ -13,4 +13,8 @@ public class UserRegisterParam implements Serializable {
 
     @NotEmpty(message = "密码不能为空")
     private String password;
+
+    private String nickname;
+
+    private String avatar;
 }

@@ -4,6 +4,7 @@ import com.ices.aigccommunity.controller.user.vo.UserVo;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 @Data
@@ -16,7 +17,7 @@ public class CommentVo implements Serializable {
 
     private List<CommentVo> childrens;
 
-    private String replyTime;
+    private Date replyTime;
 
     private Integer level;
 

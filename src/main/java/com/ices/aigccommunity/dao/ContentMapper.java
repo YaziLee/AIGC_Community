@@ -15,8 +15,12 @@ public interface ContentMapper {
 
     long updateBrowsed(long id);
 
-    long updateLiked(long id);
+    long incLiked(long id);
 
-    long updateCollected(long id);
+    long decLiked(long id);
+
+    long incCollected(long id);
+
+    long decCollected(long id);
 
 }

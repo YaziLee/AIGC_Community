@@ -24,4 +24,8 @@ public class ContentUploadParam implements Serializable {
 
     @NotNull(message = "发布者id不能为空")
     private Long publisherId;
+
+    private String name;
+
+    private String description;
 }

@@ -12,5 +12,7 @@ public interface UserMapper {
 
     User getById(long id);
 
+    User getByLoginname(String loginName);
+
 
 }

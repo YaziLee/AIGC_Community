@@ -5,15 +5,13 @@ import com.ices.aigccommunity.service.ContentService;
 import com.ices.aigccommunity.service.ImageService;
 import com.ices.aigccommunity.utils.Result;
 import com.ices.aigccommunity.utils.ResultGenerator;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 public class ImageContrller {
 
     @Resource

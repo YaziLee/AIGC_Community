@@ -1,19 +1,16 @@
 package com.ices.aigccommunity.service.impl;
 
 import com.ices.aigccommunity.common.ServiceResultEnum;
-import com.ices.aigccommunity.dao.CommentMapper;
-import com.ices.aigccommunity.dao.ContentMapper;
-import com.ices.aigccommunity.dao.ImageMapper;
-import com.ices.aigccommunity.dao.LikedMapMapper;
-import com.ices.aigccommunity.enity.Comment;
-import com.ices.aigccommunity.enity.Content;
-import com.ices.aigccommunity.enity.Image;
-import com.ices.aigccommunity.enity.LikedMap;
+import com.ices.aigccommunity.controller.content.param.ContentUploadParam;
+import com.ices.aigccommunity.controller.content.vo.ContentDetailVO;
+import com.ices.aigccommunity.dao.*;
+import com.ices.aigccommunity.enity.*;
 import com.ices.aigccommunity.service.ContentService;
 import com.ices.aigccommunity.utils.ImageUtil;
 import com.ices.aigccommunity.utils.QiniuyunUtil;
 import com.ices.aigccommunity.utils.Result;
 import com.ices.aigccommunity.utils.ResultGenerator;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,16 +32,18 @@ public class ContentServiceImpl implements ContentService {
     ImageMapper imageMapper;
     @Resource
     LikedMapMapper likedMapMapper;
+    @Resource
+    CollectedMapMapper collectedMapMapper;
 
     private static final Logger logger = LoggerFactory.getLogger(ContentServiceImpl.class);
 
     @Override
     @Transactional
-    public String upload(String url1, String url2, String url3, String url4, String url5,String prompt,long publisherId){
+    public String upload(ContentUploadParam contentUploadParam){
 
         // 将封面图写入image表
         Image coverImage=new Image();
-        coverImage.setUrl(url1);
+        coverImage.setUrl(contentUploadParam.getImageUrl1());
         coverImage.setType(0);
         coverImage.setSubjectTo(0l);
         imageMapper.insertImage(coverImage);
@@ -57,16 +56,18 @@ public class ContentServiceImpl implements ContentService {
         Date publishTime=new Date();
         logger.info("当前时间是："+publishTime);
         content.setPublishTime(publishTime);
-        content.setPrompt(prompt);
-        content.setPublisher(publisherId);
+        content.setPrompt(contentUploadParam.getPrompt());
+        content.setPublisher(contentUploadParam.getPublisherId());
         content.setImageID(coverImageID);
+        content.setDescription(contentUploadParam.getDescription());
+        content.setName(contentUploadParam.getName());
         contentMapper.insertContent(content);
         long contentID=content.getId();
         //更新封面图的指向ID
         imageMapper.setFatherId(coverImageID,contentID);
 
         // 从七牛云上下载封面图
-        File coverImageFile=QiniuyunUtil.downloadFile(url1);
+        File coverImageFile=QiniuyunUtil.downloadFile(contentUploadParam.getImageUrl1());
         //裁剪封面图
         List<File> cropedImageFiles=ImageUtil.imageCrop(coverImageFile);
         //剪裁完成，删除封面图
@@ -90,14 +91,14 @@ public class ContentServiceImpl implements ContentService {
             System.out.println("插入裁剪图的ID是："+cropimageID);//注释
 
             //依次上传衍生图片
-            if(i==0&&url2!=null)
-                insertImage(cropimageID,url2);
-            if(i==1&&url3!=null)
-                insertImage(cropimageID,url3);
-            if(i==2&&url4!=null)
-                insertImage(cropimageID,url4);
-            if(i==3&&url5!=null)
-                insertImage(cropimageID,url5);
+            if(i==0&&contentUploadParam.getImageUrl2()!=null)
+                insertImage(cropimageID,contentUploadParam.getImageUrl2());
+            if(i==1&&contentUploadParam.getImageUrl3()!=null)
+                insertImage(cropimageID,contentUploadParam.getImageUrl3());
+            if(i==2&&contentUploadParam.getImageUrl4()!=null)
+                insertImage(cropimageID,contentUploadParam.getImageUrl4());
+            if(i==3&&contentUploadParam.getImageUrl5()!=null)
+                insertImage(cropimageID,contentUploadParam.getImageUrl5());
             //变量i用来记录四宫格位置
             i++;
 
@@ -145,17 +146,31 @@ public class ContentServiceImpl implements ContentService {
     }
 
     @Transactional
-    public Content getOne(long contentId){
+    public ContentDetailVO getDetail(long userId, long contentId){
         Content content=contentMapper.getById(contentId);
+        ContentDetailVO contentDetailVO=new ContentDetailVO();
+        BeanUtils.copyProperties(content,contentDetailVO);
+
+        LikedMap likedMap=likedMapMapper.selectByContentUserId(userId,contentId);
+        CollectedMap collectedMap=collectedMapMapper.selectByContentUserId(userId,contentId);
+
+        if(likedMap==null)
+            contentDetailVO.setCollectedd(false);
+        else
+            contentDetailVO.setLikedd(true);
+        if(collectedMap==null)
+            contentDetailVO.setCollectedd(false);
+        else
+            contentDetailVO.setCollectedd(true);
         contentMapper.updateBrowsed(contentId);
-        return content;
+        return contentDetailVO;
     }
 
     @Transactional
     public Result liked(long userId, long contentId){
 
         likedMapMapper.insertRecord(userId,contentId);
-        contentMapper.updateLiked(contentId);
+        contentMapper.incLiked(contentId);
         return ResultGenerator.genSuccessResult();
 
     }
@@ -163,8 +178,26 @@ public class ContentServiceImpl implements ContentService {
     @Transactional
     public Result collected(long userId, long contentId){
 
-        likedMapMapper.insertRecord(userId,contentId);
-        contentMapper.updateLiked(contentId);
+        collectedMapMapper.insertRecord(userId,contentId);
+        contentMapper.incCollected(contentId);
+        return ResultGenerator.genSuccessResult();
+
+    }
+
+    @Transactional
+    public Result disLiked(long userId, long contentId){
+
+        likedMapMapper.deleteRecord(userId,contentId);
+        contentMapper.decLiked(contentId);
+        return ResultGenerator.genSuccessResult();
+
+    }
+
+    @Transactional
+    public Result disCollected(long userId, long contentId){
+
+        collectedMapMapper.deleteRecord(userId,contentId);
+        contentMapper.decCollected(contentId);
         return ResultGenerator.genSuccessResult();
 
     }

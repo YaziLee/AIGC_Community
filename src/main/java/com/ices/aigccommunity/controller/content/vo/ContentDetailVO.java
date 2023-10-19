@@ -1,11 +1,12 @@
-package com.ices.aigccommunity.enity;
+package com.ices.aigccommunity.controller.content.vo;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class Content {
+public class ContentDetailVO implements Serializable {
     private Long id;
 
     private Long publisher;
@@ -28,4 +29,7 @@ public class Content {
 
     private Long collected;
 
+    private boolean isCollectedd;
+
+    private boolean isLikedd;
 }

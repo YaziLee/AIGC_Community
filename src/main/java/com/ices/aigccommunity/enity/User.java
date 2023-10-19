@@ -11,11 +11,11 @@ public class User {
 
     private String password;
 
-    private String authority;
+    private Integer authority;
 
     private String avatar;
 
     private String tel;
 
-    private String email;
+    private String email; //改用为nickname
 }

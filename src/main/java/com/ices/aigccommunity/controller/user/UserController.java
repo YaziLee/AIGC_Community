@@ -5,21 +5,23 @@ import com.ices.aigccommunity.common.ServiceResultEnum;
 import com.ices.aigccommunity.config.annotation.TokenToMallUser;
 import com.ices.aigccommunity.controller.user.param.UserLoginParam;
 import com.ices.aigccommunity.controller.user.param.UserRegisterParam;
+import com.ices.aigccommunity.controller.user.vo.LoginVo;
+import com.ices.aigccommunity.controller.user.vo.UserVo;
 import com.ices.aigccommunity.enity.User;
 import com.ices.aigccommunity.service.UserService;
 import com.ices.aigccommunity.utils.Result;
 import com.ices.aigccommunity.utils.ResultGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
 
 @RestController
+@CrossOrigin
 public class UserController {
 
     @Resource
@@ -27,16 +29,25 @@ public class UserController {
     private static final Logger logger = LoggerFactory.getLogger(UserController.class);
 
     @PostMapping("/user/login")
-    public Result<String> login( @RequestBody @Valid UserLoginParam userLoginParam) {
+    public Result login( @RequestBody @Valid UserLoginParam userLoginParam) {
 
         String loginResult = userService.login(userLoginParam.getLoginName(), userLoginParam.getPassword());
 
         logger.info("login api,loginName={},loginResult={}", userLoginParam.getLoginName(), loginResult);
 
+        LoginVo loginVo=new LoginVo();
+
         //登录成功
         if (StringUtils.hasText(loginResult) && loginResult.length() == Constants.TOKEN_LENGTH) {
             Result result = ResultGenerator.genSuccessResult();
-            result.setData(loginResult);
+            User user=userService.getByLoginname(userLoginParam.getLoginName());
+            loginVo.setUserId(user.getId());
+            loginVo.setNickname(user.getEmail());
+            loginVo.setAvatar(user.getAvatar());
+            loginVo.setToken(loginResult);
+            loginVo.setAuthority(user.getAuthority());
+
+            result.setData(loginVo);
             return result;
         }
         //登录失败
@@ -47,7 +58,7 @@ public class UserController {
     @PostMapping("/user/register")
     public Result register(@RequestBody @Valid UserRegisterParam userRegisterParam) {
 
-        String registerResult = userService.register(userRegisterParam.getLoginName(), userRegisterParam.getPassword());
+        String registerResult = userService.register(userRegisterParam.getLoginName(), userRegisterParam.getPassword(),userRegisterParam.getAvatar(),userRegisterParam.getNickname());
 
         logger.info("register api,loginName={},loginResult={}", userRegisterParam.getLoginName(), registerResult);
 
@@ -60,7 +71,7 @@ public class UserController {
     }
 
     @PostMapping("/user/logout")
-    public Result<String> logout(@TokenToMallUser @RequestBody User loginUser) {
+    public Result logout(@TokenToMallUser @RequestBody User loginUser) {
         Boolean logoutResult = userService.logout(loginUser.getId());
 
         logger.info("logout api,loginMallUser={}", loginUser.getId());
@@ -73,4 +84,11 @@ public class UserController {
         return ResultGenerator.genFailResult("logout error");
     }
 
+    @GetMapping("/user/info")
+    public Result<UserVo> getUserDetail(@TokenToMallUser User loginUser) {
+        //已登录则直接返回
+        UserVo userVO = new UserVo();
+        BeanUtils.copyProperties(loginUser, userVO);
+        return ResultGenerator.genSuccessResult(userVO);
+    }
 }

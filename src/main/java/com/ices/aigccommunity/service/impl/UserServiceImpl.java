@@ -2,6 +2,7 @@ package com.ices.aigccommunity.service.impl;
 
 import com.ices.aigccommunity.common.ServiceResultEnum;
 import com.ices.aigccommunity.controller.content.CommentController;
+import com.ices.aigccommunity.controller.user.vo.LoginVo;
 import com.ices.aigccommunity.dao.UserMapper;
 import com.ices.aigccommunity.dao.UserTokenMapper;
 import com.ices.aigccommunity.enity.User;
@@ -31,14 +32,23 @@ public class UserServiceImpl implements UserService {
     private static final Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
 
     @Override
-    public String register(String loginName, String password) {
+    public String register(String loginName, String password,String avatar,String nickname) {
         //验证有无同名用户
+        if (userMapper.getByLoginname(loginName) != null) {
+            return ServiceResultEnum.SAME_LOGIN_NAME_EXIST.getResult();
+        }
 
         User registerUser = new User();
+
         registerUser.setUsername(loginName);
 
         String passwordMD5 = MD5Util.MD5Encode(password, "UTF-8");
         registerUser.setPassword(passwordMD5);
+
+        registerUser.setAvatar(avatar);
+        registerUser.setEmail(nickname);
+        registerUser.setAuthority(2);
+        logger.info("注册的用户信息是：{}",registerUser);
 
         if (userMapper.register(registerUser) > 0) {
             return ServiceResultEnum.SUCCESS.getResult();
@@ -67,6 +77,7 @@ public class UserServiceImpl implements UserService {
                 //新增一条token数据
                 if (userTokenMapper.insertSelective(mallUserToken) > 0) {
                     //新增成功后返回
+
                     return token;
                 }
             } else {
@@ -95,6 +106,11 @@ public class UserServiceImpl implements UserService {
 
     public User getById(long id){
         User user=userMapper.getById(id);
+        return user;
+    }
+
+    public User getByLoginname(String loginName){
+        User user=userMapper.getByLoginname(loginName);
         return user;
     }
 

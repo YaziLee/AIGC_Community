@@ -3,10 +3,16 @@ package com.ices.aigccommunity.controller.content;
 import com.ices.aigccommunity.common.ServiceResultEnum;
 import com.ices.aigccommunity.controller.content.param.ContentUploadParam;
 import com.ices.aigccommunity.controller.content.param.GetDetailParam;
+import com.ices.aigccommunity.controller.content.vo.ContentDetailVO;
+import com.ices.aigccommunity.dao.CollectedMapMapper;
+import com.ices.aigccommunity.dao.LikedMapMapper;
+import com.ices.aigccommunity.enity.CollectedMap;
 import com.ices.aigccommunity.enity.Content;
+import com.ices.aigccommunity.enity.LikedMap;
 import com.ices.aigccommunity.service.ContentService;
 import com.ices.aigccommunity.utils.Result;
 import com.ices.aigccommunity.utils.ResultGenerator;
+import org.springframework.beans.BeanUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,10 +21,15 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 public class ContentController {
 
     @Resource
     ContentService contentService;
+    @Resource
+    CollectedMapMapper collectedMapMapper;
+    @Resource
+    LikedMapMapper likedMapMapper;
 
     @PostMapping("/content/upload")
     public Result<String> upload(@RequestBody @Valid ContentUploadParam contentUploadParam) {
@@ -31,7 +42,7 @@ public class ContentController {
         //  插入算法：用五个列表，分别记录五张四宫格图片及其切分图片的URL（列表长度为5）
         //4.上传成功返回
 
-        String uploadResult=contentService.upload(contentUploadParam.getImageUrl1(),contentUploadParam.getImageUrl2(),contentUploadParam.getImageUrl3(),contentUploadParam.getImageUrl4(),contentUploadParam.getImageUrl5(),contentUploadParam.getPrompt(),contentUploadParam.getPublisherId());
+        String uploadResult=contentService.upload(contentUploadParam);
         Result result = ResultGenerator.genSuccessResult();
         result.setData(uploadResult);
         return result;
@@ -46,8 +57,9 @@ public class ContentController {
 
     @PostMapping("/content/getDetail")
     public Result<String> getDetail(@RequestBody GetDetailParam getDetailParam) {
-        Content content=contentService.getOne(getDetailParam.getContentId());
-        Result result = ResultGenerator.genSuccessResult(content);
+        ContentDetailVO contentDetailVO=contentService.getDetail(getDetailParam.getUserId(),getDetailParam.getContentId());
+
+        Result result = ResultGenerator.genSuccessResult(contentDetailVO);
         return result;
     }
 
@@ -59,6 +71,16 @@ public class ContentController {
     @GetMapping("/content/collected")
     public Result collected(long userId,long contentId){
         return contentService.collected(userId,contentId);
+    }
+
+    @GetMapping("/content/disLiked")
+    public Result disLiked(long userId,long contentId){
+        return contentService.disLiked(userId,contentId);
+    }
+
+    @GetMapping("/content/disCollected")
+    public Result disCollected(long userId,long contentId){
+        return contentService.disCollected(userId,contentId);
     }
 
 }
