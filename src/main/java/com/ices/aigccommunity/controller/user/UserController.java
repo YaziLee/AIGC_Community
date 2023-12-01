@@ -21,7 +21,7 @@ import javax.annotation.Resource;
 import javax.validation.Valid;
 
 @RestController
-@CrossOrigin
+@RequestMapping("/api")
 public class UserController {
 
     @Resource

@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @RestController
-@CrossOrigin
+@RequestMapping("/api")
 public class ImageContrller {
 
     @Resource
