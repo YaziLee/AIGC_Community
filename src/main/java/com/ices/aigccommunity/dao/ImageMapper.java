@@ -16,4 +16,8 @@ public interface ImageMapper {
     List<Image> getSon(long imageId);
 
     Image getById(long imageId);
+
+    List<Image> getRealImageByContent(long contentID);
+
+    long deleteByID(long id);
 }

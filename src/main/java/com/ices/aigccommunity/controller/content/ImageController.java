@@ -1,7 +1,6 @@
 package com.ices.aigccommunity.controller.content;
 
 import com.ices.aigccommunity.enity.Image;
-import com.ices.aigccommunity.service.ContentService;
 import com.ices.aigccommunity.service.ImageService;
 import com.ices.aigccommunity.utils.Result;
 import com.ices.aigccommunity.utils.ResultGenerator;
@@ -12,7 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api")
-public class ImageContrller {
+public class ImageController {
 
     @Resource
     ImageService imageService;
@@ -28,5 +27,11 @@ public class ImageContrller {
     Result getOne(@RequestParam long imageId){
         Image image=imageService.getOne(imageId);
         return ResultGenerator.genSuccessResult(image);
+    }
+
+    @GetMapping("image/getRealImageByContent")
+    Result getRealImageByContent(@RequestParam long contentID){
+        List<Image> realImages=imageService.getRealImageByContent(contentID);
+        return ResultGenerator.genSuccessResult(realImages);
     }
 }

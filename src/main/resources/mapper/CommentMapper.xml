@@ -78,4 +78,8 @@
         where  id=#{id,jdbcType=BIGINT}
     </select>
 
+    <delete id="deleteByContentID" parameterType="java.lang.Long">
+        delete from comment where contentId=#{id}
+    </delete>
+
 </mapper>

@@ -3,12 +3,18 @@ package com.ices.aigccommunity.utils;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import com.ices.aigccommunity.common.Constants;
 import com.ices.aigccommunity.common.QiniuyunCons;
+import com.qiniu.common.QiniuException;
+import com.qiniu.http.Response;
+import com.qiniu.storage.BucketManager;
 import com.qiniu.storage.Configuration;
 import com.qiniu.storage.UploadManager;
+import com.qiniu.storage.model.BatchStatus;
 import com.qiniu.util.Auth;
 
 
@@ -88,5 +94,42 @@ public class QiniuyunUtil {
             e.printStackTrace();
             return "error";
         }
+    }
+
+    /**
+     * 从七牛云删除图片
+     * @param fileNameList 图片名集合
+     * @return 返回每张图片的删除结果
+     */
+    public static List<String> deleteImage(String[] fileNameList){
+        //用Json格式传数组时直接传["xxx", "xxx", "xxx", "xxx"]
+        // 七牛云配置信息
+        String accessKey = QiniuyunCons.ACCESS_KEY;
+        String secretKey = QiniuyunCons.SECRET_KEY;
+        String bucket = QiniuyunCons.BUCKET;
+        String domain = QiniuyunCons.DOMAIN_BUCKET;
+        Auth auth = Auth.create(accessKey, secretKey);
+        Configuration cfg = new Configuration();
+        BucketManager bucketManager = new BucketManager(auth, cfg);
+        //创建一个用来接收删除结果的集合
+        List<String> list = new ArrayList<>();
+        try {
+            //单次批量请求的文件数量不得超过1000
+            BucketManager.BatchOperations batchOperations = new BucketManager.BatchOperations();
+            batchOperations.addDeleteOp(bucket, fileNameList);
+            Response response = bucketManager.batch(batchOperations);
+            BatchStatus[] batchStatusList = response.jsonToObject(BatchStatus[].class);
+            for (int i = 0; i < fileNameList.length; i++) {
+                BatchStatus status = batchStatusList[i];
+                if (status.code == 200) {//成功返回文件名+true并添加进集合
+                    list.add("{fileName:"+fileNameList[i]+",deleteResult:true}");
+                }else {//失败返回文件名+false并添加进集合
+                    list.add("{fileName:"+fileNameList[i]+",deleteResult:false}");
+                }
+            }
+        } catch (QiniuException ex) {
+            System.err.println("七牛云ERROR:" + ex.response.toString());
+        }
+        return list;
     }
 }

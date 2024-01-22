@@ -35,4 +35,8 @@
     <select id="selectByContentUserId" resultMap="BaseResultMap">
         select * from collected_map where userId=#{userId,jdbcType=BIGINT} and contentId=#{contentId,jdbcType=BIGINT}
     </select>
+
+    <delete id="deleteByContentID" parameterType="java.lang.Long">
+        delete from collected_map where contentId=#{id}
+    </delete>
 </mapper>

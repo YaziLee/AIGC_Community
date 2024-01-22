@@ -34,4 +34,8 @@
         select * from liked_map where userId=#{userId,jdbcType=BIGINT} and contentId=#{contentId,jdbcType=BIGINT}
     </select>
 
+    <delete id="deleteByContentID" parameterType="java.lang.Long">
+        delete from liked_map where contentId=#{id}
+    </delete>
+
 </mapper>

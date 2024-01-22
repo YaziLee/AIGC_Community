@@ -11,4 +11,6 @@ public interface CollectedMapMapper {
     int deleteRecord(@Param("userId")long userId, @Param("contentId")long contentId);
 
     CollectedMap selectByContentUserId(@Param("userId")long userId, @Param("contentId")long contentId);
+
+    int deleteByContentID(long id);
 }

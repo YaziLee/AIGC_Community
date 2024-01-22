@@ -75,4 +75,21 @@
         select * from user where username=#{loginName}
     </select>
 
+    <select id="selectAllDesigners" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select * from user where authority=1
+    </select>
+
+    <update id="updateInfo" parameterType="com.ices.aigccommunity.enity.User">
+        UPDATE user
+        <set>
+            <if test="username != null">username = #{username},</if>
+            <if test="password != null">password = #{password},</if>
+            <if test="authority != null">authority = #{authority},</if>
+            <if test="avatar != null">avatar = #{avatar},</if>
+            <if test="tel != null">tel = #{tel},</if>
+            <if test="email != null">email = #{email}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
 </mapper>

@@ -15,10 +15,16 @@ public class ImageServiceImpl implements ImageService {
     ImageMapper imageMapper;
 
     public List<Image> getSon(long imageId){
+
         return imageMapper.getSon(imageId);
     }
 
     public Image getOne(long imageId){
+
         return imageMapper.getById(imageId);
+    }
+
+    public List<Image> getRealImageByContent(long contentID){
+        return imageMapper.getRealImageByContent(contentID);
     }
 }

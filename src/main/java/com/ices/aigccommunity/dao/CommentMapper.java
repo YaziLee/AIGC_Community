@@ -10,4 +10,6 @@ public interface CommentMapper {
     List<Comment> selectList(long contentId);
 
     int insertComment(Comment comment);
+
+    int deleteByContentID(long id);
 }

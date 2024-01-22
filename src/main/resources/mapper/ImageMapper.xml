@@ -51,4 +51,13 @@
     <select id="getById" parameterType="java.lang.Long" resultMap="BaseResultMap">
         select * from image where id=#{id,jdbcType=BIGINT}
     </select>
+
+    <select id="getRealImageByContent" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select * from image where type=4 and subjectTo=#{contentID,jdbcType=BIGINT}
+    </select>
+
+    <delete id="deleteByID" parameterType="java.lang.Long">
+        delete from image where id=#{id}
+    </delete>
+
 </mapper>

@@ -44,13 +44,12 @@ public class CommentServiceImpl implements CommentService {
         List<CommentVo> commentVos=new ArrayList<>();
         //补充评论内容 copy属性转换为vo
 
-        logger.info("属于内容的评论有：{}",comments);
         for (Comment comment : comments) {
             //从entity中提取出vo信息
             CommentVo commentVo=new CommentVo();
-            logger.info("评论的内容是：{}",comment);
+
             BeanUtils.copyProperties(comment,commentVo);
-            logger.info("复制后评论的内容是：{}",commentVo);
+
 
             //作者信息
             User author = userService.getById(comment.getUserId());

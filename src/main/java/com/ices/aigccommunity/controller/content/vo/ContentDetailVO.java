@@ -13,6 +13,8 @@ public class ContentDetailVO implements Serializable {
 
     private Long imageID;
 
+    private String imageURL;
+
     private Date publishTime;
 
     private Integer state;

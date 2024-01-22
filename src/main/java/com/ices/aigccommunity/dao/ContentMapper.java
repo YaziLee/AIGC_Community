@@ -23,4 +23,6 @@ public interface ContentMapper {
 
     long decCollected(long id);
 
+    long deleteByID(long id);
+
 }

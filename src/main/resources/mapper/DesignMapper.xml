@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ices.aigccommunity.dao.DesignMapper">
+
+    <resultMap id="BaseResultMap" type="com.ices.aigccommunity.enity.Design">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="designer" property="designer" jdbcType="BIGINT"/>
+        <result column="design_from_content_id" property="designFromContentId" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="price" property="price" jdbcType="FLOAT"/>
+        <result column="size" property="size" jdbcType="VARCHAR"/>
+        <result column="time" property="time" jdbcType="INTEGER"/>
+        <result column="contact" property="contact" jdbcType="VARCHAR"/>
+        <result column="publish_time" property="publishTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, designer, design_from_content_id, name, description, price, size, time, contact, publish_time
+    </sql>
+
+    <insert id="insert" parameterType="com.ices.aigccommunity.enity.Design" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO design
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="designer != null">designer,</if>
+            <if test="designFromContentId != null">design_from_content_id,</if>
+            <if test="name != null">name,</if>
+            <if test="description != null">description,</if>
+            <if test="price != null">price,</if>
+            <if test="size != null">size,</if>
+            <if test="time != null">time,</if>
+            <if test="contact != null">contact,</if>
+            <if test="publishTime != null">publish_time,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="designer != null">#{designer},</if>
+            <if test="designFromContentId != null">#{designFromContentId},</if>
+            <if test="name != null">#{name},</if>
+            <if test="description != null">#{description},</if>
+            <if test="price != null">#{price},</if>
+            <if test="size != null">#{size},</if>
+            <if test="time != null">#{time},</if>
+            <if test="contact != null">#{contact},</if>
+            <if test="publishTime != null">#{publishTime},</if>
+        </trim>
+    </insert>
+
+    <select id="selectById" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM design
+        WHERE id = #{id}
+    </select>
+
+    <select id="selectByDesignFromContentId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM design
+        WHERE design_from_content_id = #{designFromContentId}
+    </select>
+
+
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM design
+    </select>
+
+    <delete id="deleteById" parameterType="java.lang.Long">
+        DELETE FROM design
+        WHERE id = #{id}
+    </delete>
+
+    <select id="getByDesigner" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        select * from design where designer=#{designerID}
+    </select>
+
+</mapper>

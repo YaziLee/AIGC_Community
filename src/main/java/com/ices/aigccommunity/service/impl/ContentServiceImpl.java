@@ -17,8 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.annotation.Resource;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +37,8 @@ public class ContentServiceImpl implements ContentService {
     LikedMapMapper likedMapMapper;
     @Resource
     CollectedMapMapper collectedMapMapper;
+    @Resource
+    CommentMapper commentMapper;
 
     private static final Logger logger = LoggerFactory.getLogger(ContentServiceImpl.class);
 
@@ -48,7 +53,6 @@ public class ContentServiceImpl implements ContentService {
         coverImage.setSubjectTo(0l);
         imageMapper.insertImage(coverImage);
         long coverImageID=coverImage.getId();
-        System.out.println("插入封面图的主键ID是："+coverImage.getId());//注释
 
         // 将封面图写入content表
         Content content=new Content();
@@ -65,6 +69,15 @@ public class ContentServiceImpl implements ContentService {
         long contentID=content.getId();
         //更新封面图的指向ID
         imageMapper.setFatherId(coverImageID,contentID);
+
+        //将真值图插入image表
+        for(String url:contentUploadParam.getRealImages()){
+            Image realImage=new Image();
+            realImage.setType(4);
+            realImage.setUrl(url);
+            realImage.setSubjectTo(contentID);
+            imageMapper.insertImage(realImage);
+        }
 
         // 从七牛云上下载封面图
         File coverImageFile=QiniuyunUtil.downloadFile(contentUploadParam.getImageUrl1());
@@ -200,6 +213,53 @@ public class ContentServiceImpl implements ContentService {
         contentMapper.decCollected(contentId);
         return ResultGenerator.genSuccessResult();
 
+    }
+    @Transactional
+    public String deleteByID(int id){
+        //查询内容
+        Content content=contentMapper.getById(id);
+        //得到封面图
+        Image coverImage=imageMapper.getById(content.getImageID());
+        //创建待删除的图片对象列表
+        List<Image> images=new ArrayList<>();
+        images.add(coverImage);
+        //根据树形结构依次获取内容所属图片并加入待删除列表
+        List<Image> coverCropImages=imageMapper.getSon(coverImage.getId());
+        for(Image coverCropImage:coverCropImages){
+            images.add(coverCropImage);
+            List<Image> newImages=imageMapper.getSon(coverCropImage.getId());
+            for(Image newImage:newImages){
+                images.add(newImage);
+                List<Image> newCropImages=imageMapper.getSon(newImage.getId());
+                for(Image newCropImage:newCropImages){
+                    images.add(newCropImage);
+                }
+            }
+        }
+        //删除图片记录
+        List<String> imageKey=new ArrayList<>();
+        //提取七牛云图片uuid
+        Pattern pattern = Pattern.compile("/([0-9a-fA-F-]+)$");
+        for(Image image:images){
+            Matcher matcher = pattern.matcher(image.getUrl());
+            if (matcher.find()) {
+                imageKey.add( matcher.group(1));
+            }
+            imageMapper.deleteByID(image.getId());
+        }
+        //删除七牛云图片对象
+        String[] imageUrlArray = new String[imageKey.size()];
+        imageKey.toArray(imageUrlArray);
+        logger.info("内容{}的图片url为：{}",content.getId(),imageUrlArray);
+        List<String> results=QiniuyunUtil.deleteImage(imageUrlArray);
+        logger.info("内容{}的七牛云图片删除结果为：{}",content.getId(),results);
+        //删除评论、点赞、收藏
+        commentMapper.deleteByContentID(content.getId());
+        likedMapMapper.deleteByContentID(content.getId());
+        collectedMapMapper.deleteByContentID(content.getId());
+        contentMapper.deleteByID(id);
+
+        return ServiceResultEnum.SUCCESS.getResult();
     }
 
 

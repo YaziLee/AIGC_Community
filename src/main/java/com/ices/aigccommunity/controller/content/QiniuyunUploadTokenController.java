@@ -1,16 +1,17 @@
-package com.ices.aigccommunity.controller;
+package com.ices.aigccommunity.controller.content;
 
 import com.ices.aigccommunity.service.UploadTokenService;
 import com.ices.aigccommunity.utils.Result;
 import com.ices.aigccommunity.utils.ResultGenerator;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 
 @RestController
-@CrossOrigin
+@RequestMapping("/api")
 public class QiniuyunUploadTokenController {
 
     @Resource

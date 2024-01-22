@@ -17,4 +17,6 @@ public interface ContentService {
     Result disLiked(long userId, long contentId);
 
     Result disCollected(long userId, long contentId);
+
+    String deleteByID(int id);
 }

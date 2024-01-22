@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ices.aigccommunity.dao.MessageMapper">
+
+    <resultMap id="BaseResultMap" type="com.ices.aigccommunity.enity.Message">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="user_id" property="userId" jdbcType="BIGINT"/>
+        <result column="design_id" property="designId" jdbcType="BIGINT"/>
+        <result column="design_image_id" property="designImageId" jdbcType="BIGINT"/>
+        <result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
+        <result column="comment" property="comment" jdbcType="VARCHAR"/>
+        <result column="publish_time" property="publishTime" jdbcType="TIMESTAMP"/>
+        <result column="direction" property="direction" jdbcType="TINYINT"/>
+        <result column="read_status" property="readStatus" jdbcType="TINYINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, user_id, design_id, design_image_id, image_url, comment, publish_time, direction, read_status
+    </sql>
+
+    <insert id="insert" parameterType="com.ices.aigccommunity.enity.Message" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO message
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="designId != null">design_id,</if>
+            <if test="designImageId != null">design_image_id,</if>
+            <if test="imageUrl != null">image_url,</if>
+            <if test="comment != null">comment,</if>
+            <if test="publishTime != null">publish_time,</if>
+            <if test="direction != null">direction,</if>
+            <if test="readStatus != null">read_status,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="designId != null">#{designId},</if>
+            <if test="designImageId != null">#{designImageId},</if>
+            <if test="imageUrl != null">#{imageUrl},</if>
+            <if test="comment != null">#{comment},</if>
+            <if test="publishTime != null">#{publishTime},</if>
+            <if test="direction != null">#{direction},</if>
+            <if test="readStatus != null">#{readStatus},</if>
+        </trim>
+    </insert>
+
+    <select id="selectByDesignId" parameterType="java.lang.Long" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM message
+        WHERE design_id = #{designId}
+    </select>
+
+    <delete id="deleteByDesignId" parameterType="java.lang.Long">
+        DELETE FROM message
+        WHERE design_id = #{designId}
+    </delete>
+
+    <update id="updateReadStatus" parameterType="java.lang.Long">
+        UPDATE message
+        SET read_status = 1
+        WHERE read_status = 0
+    </update>
+
+</mapper>

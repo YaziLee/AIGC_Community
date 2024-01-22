@@ -9,8 +9,6 @@ public enum ServiceResultEnum {
 
     PARAM_ERROR("参数错误！"),
 
-    SAME_CATEGORY_EXIST("已存在同级同名的分类！"),
-
     SAME_LOGIN_NAME_EXIST("用户名已存在！"),
 
     LOGIN_NAME_NULL("请输入登录名！"),
@@ -22,16 +20,6 @@ public enum ServiceResultEnum {
     LOGIN_VERIFY_CODE_NULL("请输入验证码！"),
 
     LOGIN_VERIFY_CODE_ERROR("验证码错误！"),
-
-    SAME_INDEX_CONFIG_EXIST("已存在相同的首页配置项！"),
-
-    GOODS_CATEGORY_ERROR("分类数据异常！"),
-
-    SAME_GOODS_EXIST("已存在相同的商品信息！"),
-
-    GOODS_NOT_EXIST("商品不存在！"),
-
-    GOODS_PUT_DOWN("商品已下架！"),
 
     SHOPPING_CART_ITEM_LIMIT_NUMBER_ERROR("超出单个商品的最大购买数量！"),
 

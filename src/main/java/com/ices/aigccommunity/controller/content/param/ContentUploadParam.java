@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
+import java.util.List;
 
 @Data
 public class ContentUploadParam implements Serializable {
@@ -28,4 +29,6 @@ public class ContentUploadParam implements Serializable {
     private String name;
 
     private String description;
+
+    private List<String> realImages;
 }

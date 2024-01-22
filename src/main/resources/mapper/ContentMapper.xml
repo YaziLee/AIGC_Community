@@ -117,5 +117,9 @@
         update content set collected = collected-1 where id = #{contentId,jdbcType=BIGINT}
     </update>
 
+    <delete id="deleteByID" parameterType="java.lang.Long">
+        delete from content where id=#{id}
+    </delete>
+
 
 </mapper>

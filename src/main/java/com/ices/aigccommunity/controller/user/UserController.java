@@ -2,7 +2,8 @@ package com.ices.aigccommunity.controller.user;
 
 import com.ices.aigccommunity.common.Constants;
 import com.ices.aigccommunity.common.ServiceResultEnum;
-import com.ices.aigccommunity.config.annotation.TokenToMallUser;
+import com.ices.aigccommunity.config.annotation.TokenToUser;
+import com.ices.aigccommunity.controller.user.param.UserInfoChangeParam;
 import com.ices.aigccommunity.controller.user.param.UserLoginParam;
 import com.ices.aigccommunity.controller.user.param.UserRegisterParam;
 import com.ices.aigccommunity.controller.user.vo.LoginVo;
@@ -19,6 +20,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api")
@@ -71,7 +74,7 @@ public class UserController {
     }
 
     @PostMapping("/user/logout")
-    public Result logout(@TokenToMallUser @RequestBody User loginUser) {
+    public Result logout(@TokenToUser @RequestBody User loginUser) {
         Boolean logoutResult = userService.logout(loginUser.getId());
 
         logger.info("logout api,loginMallUser={}", loginUser.getId());
@@ -85,10 +88,40 @@ public class UserController {
     }
 
     @GetMapping("/user/info")
-    public Result<UserVo> getUserDetail(@TokenToMallUser User loginUser) {
+    public Result<UserVo> getUserDetail(@TokenToUser User loginUser) {
         //已登录则直接返回
         UserVo userVO = new UserVo();
         BeanUtils.copyProperties(loginUser, userVO);
         return ResultGenerator.genSuccessResult(userVO);
     }
+
+    @PostMapping("/user/changeInfo")
+    public Result changeInfo(@RequestBody UserInfoChangeParam userInfoChangeParam, @TokenToUser User loginUser){
+        logger.info("UserInfoChangeParam参数：{}",userInfoChangeParam);
+        BeanUtils.copyProperties(userInfoChangeParam,loginUser);
+        userService.updateInfo(loginUser);
+        return ResultGenerator.genSuccessResult();
+    }
+
+    @GetMapping("/user/getAllDesigner")
+    public Result getAllDesigner(){
+        List<User> users=userService.selectAllDesigners();
+        List<UserVo> userVos=new ArrayList<>();
+        for(User user:users){
+            UserVo userVo=new UserVo();
+            BeanUtils.copyProperties(user,userVo);
+            userVos.add(userVo);
+        }
+        return ResultGenerator.genSuccessResult(userVos);
+    }
+
+    @GetMapping("/user/getDesignerInfo")
+    public Result<UserVo> getDesignerInfo(Long id) {
+        //已登录则直接返回
+        UserVo userVO = new UserVo();
+        User designer=userService.getById(id);
+        BeanUtils.copyProperties(designer, userVO);
+        return ResultGenerator.genSuccessResult(userVO);
+    }
+
 }

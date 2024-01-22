@@ -10,6 +10,7 @@ import com.ices.aigccommunity.enity.CollectedMap;
 import com.ices.aigccommunity.enity.Content;
 import com.ices.aigccommunity.enity.LikedMap;
 import com.ices.aigccommunity.service.ContentService;
+import com.ices.aigccommunity.service.ImageService;
 import com.ices.aigccommunity.utils.Result;
 import com.ices.aigccommunity.utils.ResultGenerator;
 import org.springframework.beans.BeanUtils;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -27,10 +29,7 @@ public class ContentController {
     @Resource
     ContentService contentService;
     @Resource
-    CollectedMapMapper collectedMapMapper;
-    @Resource
-    LikedMapMapper likedMapMapper;
-
+    ImageService imageService;
     @PostMapping("/content/upload")
     public Result<String> upload(@RequestBody @Valid ContentUploadParam contentUploadParam) {
 
@@ -49,9 +48,16 @@ public class ContentController {
     }
 
     @GetMapping("/content/getAll")
-    public Result<String> getAll() {
+    public Result getAll() {
         List<Content> contents=contentService.getALL();
-        Result result = ResultGenerator.genSuccessResult(contents);
+        List<ContentDetailVO> contentDetailVOList=new ArrayList<>();
+        for(Content content:contents){
+            ContentDetailVO contentDetailVO=new ContentDetailVO();
+            BeanUtils.copyProperties(content,contentDetailVO);
+            contentDetailVO.setImageURL(imageService.getOne(content.getImageID()).getUrl());
+            contentDetailVOList.add(contentDetailVO);
+        }
+        Result result = ResultGenerator.genSuccessResult(contentDetailVOList);
         return result;
     }
 
@@ -82,5 +88,14 @@ public class ContentController {
     public Result disCollected(long userId,long contentId){
         return contentService.disCollected(userId,contentId);
     }
+
+    @GetMapping("/content/deleteByID")
+    public Result deleteByID(int id) {
+        contentService.deleteByID(id);
+        Result result = ResultGenerator.genSuccessResult();
+        return result;
+    }
+
+
 
 }
