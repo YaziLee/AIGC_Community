@@ -5,7 +5,7 @@
         <id column="id" jdbcType="BIGINT" property="id" />
         <result column="publisher" jdbcType="BIGINT" property="publisher" />
         <result column="imageID" jdbcType="BIGINT" property="imageID" />
-        <result column="publishTime" jdbcType="DATE" property="publishTime" />
+        <result column="publishTime" jdbcType="TIMESTAMP" property="publishTime" />
         <result column="state" jdbcType="TINYINT" property="state" />
         <result column="prompt" jdbcType="VARCHAR" property="prompt" />
         <result column="description" jdbcType="VARCHAR" property="description" />

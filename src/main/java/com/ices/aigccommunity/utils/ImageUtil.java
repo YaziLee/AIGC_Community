@@ -23,18 +23,19 @@ public class ImageUtil {
             BufferedImage originalImage = ImageIO.read(imageFile);
 
             // 计算每个宫格的大小
-            int squareSize = originalImage.getWidth() / 2;
+            int squareSizeX = originalImage.getWidth() / 2;
+            int squareSizeY = originalImage.getHeight() / 2;
 
             // 裁剪并保存4张单独的图片
             for (int i = 0; i < 2; i++) {
                 for (int j = 0; j < 2; j++) {
                     // 创建一个新的BufferedImage来存储裁剪后的图片
-                    BufferedImage croppedImage = new BufferedImage(squareSize, squareSize, BufferedImage.TYPE_INT_RGB);
+                    BufferedImage croppedImage = new BufferedImage(squareSizeX, squareSizeY, BufferedImage.TYPE_INT_RGB);
 
                     // 裁剪图片
-                    for (int x = 0; x < squareSize; x++) {
-                        for (int y = 0; y < squareSize; y++) {
-                            croppedImage.setRGB(x, y, originalImage.getRGB(i * squareSize + x, j * squareSize + y));
+                    for (int x = 0; x < squareSizeX; x++) {
+                        for (int y = 0; y < squareSizeY; y++) {
+                            croppedImage.setRGB(x, y, originalImage.getRGB(j * squareSizeX + x,i * squareSizeY + y));
                         }
                     }
 

@@ -34,4 +34,6 @@ public class ContentDetailVO implements Serializable {
     private boolean isCollectedd;
 
     private boolean isLikedd;
+
+    private Integer designNum;
 }

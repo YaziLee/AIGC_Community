@@ -56,10 +56,6 @@ public class ContentServiceImpl implements ContentService {
 
         // 将封面图写入content表
         Content content=new Content();
-        //获得当前时间
-        Date publishTime=new Date();
-        logger.info("当前时间是："+publishTime);
-        content.setPublishTime(publishTime);
         content.setPrompt(contentUploadParam.getPrompt());
         content.setPublisher(contentUploadParam.getPublisherId());
         content.setImageID(coverImageID);
@@ -114,7 +110,6 @@ public class ContentServiceImpl implements ContentService {
                 insertImage(cropimageID,contentUploadParam.getImageUrl5());
             //变量i用来记录四宫格位置
             i++;
-
         }
 
         return ServiceResultEnum.SUCCESS.getResult();
